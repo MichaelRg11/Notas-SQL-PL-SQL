@@ -5,20 +5,14 @@ USUARIOS BD:
 IP: 192.168.11.34
 PUERTO: 1521
 SID: genesys01
-
 Usuario: sys/system
 Contraseña: MNGR340202*
-
 Usuario: genesys
 Contraseña: Gen340202!
 
 Usuario Aplicativo
-Nivis
-Usuario: 45757224 
-Clave: 45757224
-Pedro Heredia
-Usuario: 122333 
-Clave: 12345
+Nivis / 45757224 / 45757224
+Pedro Heredia / 122333 / 12345
 
 ---------------------------------------------------------------------
 -- ingreso 13.13 CALIDAD DE MUNICIPIOS
@@ -32,12 +26,13 @@ clave: GENESYS
 http://192.168.13.13:8361/ords
 INFORTRIBUTOS / HMARTINEZ / H1140852241
 INFORTRIBUTOS / ABORELLY / 1129569305 -- sirve
+INFORTRIBUTOS /   MRODRIGUEZ / 12345
 
 --APLICATIVO
 http://192.168.13.13:8361/ords/f?p=50000:101:14317177336598::::: --> tita5386
 usuario:
 123456789 / 123456789 -- corozal
-1140852241/1140852241 -- plato / Juan de Acosta
+1140852241 / 1140852241 -- plato / Juan de Acosta
 
 ---------------------------------------------------------------------
 --Valledupar Calidad

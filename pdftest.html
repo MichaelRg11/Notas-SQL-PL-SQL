@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+		integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.4.0/dist/pdf-lib.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"
+		integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+
+</head>
+
+<body>
+	<h3>PRUEBAS CON PDFLIB PARA CREACION DE PDFS</h3>
+	<form>
+		<input type="radio" id="uno" name="metodo" value="HTML">
+		<label for="html">UNO</label><br>
+		<input type="radio" id="multiple" name="metodo" value="CSS">
+		<label for="css">MULTIPLES</label><br>
+		<div>
+			<button type="button" id="descargar">DESCARGAR</button>
+		</div>
+		<textarea id="single-pdf" rows="1" cols="80"></textarea>
+		<textarea id="multiple-pdf" cols="80" rows="10"></textarea>
+
+	</form>
+	<script>
+		$("#single-pdf").hide();
+		$("#multiple-pdf").hide();
+		$("#descargar").hide();
+		//const pdfBytes = await pdfDoc.save()
+		//createPdf();
+		async function crearPdf() {
+			const pdfDoc = await PDFLib.PDFDocument.create();
+			const page = pdfDoc.addPage([350, 400]);
+			const timesRomanFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
+			const fontSize = 12;
+			const { width, height } = page.getSize();
+
+			let jsonvar = $("#single-pdf").val();
+			page.drawText(jsonvar, {
+				x: 0,
+				y: height - 4 * fontSize,
+				size: fontSize,
+				font: timesRomanFont,
+				color: PDFLib.rgb(0, 0.53, 0.71),
+			})
+			const pdfBytes = await pdfDoc.save();
+			var file2 = new File([pdfBytes], "prueba.pdf", {
+				type: "application/pdf;charset=utf-8",
+			});
+			var zip = new JSZip();
+
+			zip.file("hola.pdf", file2);
+			zip.generateAsync({ type: "blob" }).then(function (file2) {
+				saveAs(file2, "hello.zip");
+			});
+			//saveAs(file2);
+		}
+
+		const crearPdfMultiple = async (datos) => {
+			const pdfDoc = await PDFLib.PDFDocument.create();
+			const timesRomanFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
+			const fontSize = 8;
+
+			let content = JSON.stringify(datos);
+			let jsonArray = (JSON.parse(content));
+
+			if (content[0] === '[' && content[content.length - 1] === ']') {
+				jsonArray.forEach(item => {
+					let page = pdfDoc.addPage([350, 400]);
+					const { width, height } = page.getSize();
+					console.log(`objeto => ${JSON.stringify(item)} Es un array de objeto`)
+					page.drawText(JSON.stringify(item), {
+						x: 0,
+						y: height - 4 * fontSize,
+						size: fontSize,
+						font: timesRomanFont,
+						color: PDFLib.rgb(0, 0.53, 0.71)
+					})
+				});
+
+			} else {
+				const page = pdfDoc.addPage([350, 400]);
+				const fontSize = 12;
+				const { width, height } = page.getSize();
+
+				page.drawText(JSON.stringify(jsonArray), {
+					x: 0,
+					y: height - 4 * fontSize,
+					size: fontSize,
+					font: timesRomanFont,
+					color: PDFLib.rgb(0, 0.53, 0.71),
+				})
+			}
+
+			const pdfBytes = await pdfDoc.save();
+			let file = new File([pdfBytes], "prueba.pdf", {
+				type: "application/pdf;charset=utf-8",
+			});
+
+			saveAs(file);
+		}
+
+		$("#uno").click(function () {
+			$("#single-pdf").show();
+			$("#descargar").show();
+			$("#multiple-pdf").hide();
+		});
+
+		$("#multiple").click(function () {
+			$("#single-pdf").hide();
+			$("#descargar").show();
+			$("#multiple-pdf").show();
+		});
+
+
+		$("#descargar").click(function () {
+			if ($("#uno").prop("checked")) {
+				crearPdf();
+			}
+			if ($("#multiple").prop("checked")) {
+				crearPdfMultiple();
+			}
+		});
+
+
+	</script>
+
+
+
+</body>
+
+</html>

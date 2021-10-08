@@ -1,10 +1,10 @@
-
+-- Imprimer traza
 select * from sg_d_configuraciones_log
 where cdgo_clnte = 6 and upper(nmbre_up) like upper('%pkg_gf_ajustes%');
 
 -- Configurar LOG
 select * from sg_g_log 
-where cdgo_clnte = 6 and id_log > 245322779 and nmbre_up = 'pkg_gf_ajustes.prc_rg_ajste_accon_msva'
+where nmbre_up = 'pkg_re_documentos.prc_rg_documento_rpt' --and cdgo_clnte = 6 and id_log > 245322779
 order by 1 desc;
 
 update sg_d_configuraciones_log set nvel_log = 6
