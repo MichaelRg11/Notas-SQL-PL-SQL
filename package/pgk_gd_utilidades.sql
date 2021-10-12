@@ -3,21 +3,28 @@ create table gd_g_dummy(
   id_dmmy number,
   file_blob blob
 );
-
-insert into gd_g_dummy(id_dmmy, file_blob) values(id_dmmy, empty_blob());
+/
+insert into gd_g_dummy(id_dmmy, file_blob) values(1, empty_blob());
 /
 create or replace PACKAGE pkg_gd_utilidades IS
   
-  procedure fnc_vl_archvo_exstnte (p_directorio varchar2, p_nmbre_archvo varchar2);
+  function fnc_vl_archvo_exstnte (p_directorio varchar2, p_nmbre_archvo varchar2)
+    return varchar2;
 
   function fnc_vl_archvo_blqdo (p_directorio varchar2, p_nmbre_archvo varchar2)
     return varchar2;
 
-  procedure prc_co_archco_dsco (p_directorio    varchar2
-                              , p_nmbre_archvo  varchar2
+  procedure prc_co_archco_dsco (p_directorio    varchar2    default null
+                              , p_nmbre_archvo  varchar2    default null
+                              , p_bfile         bfile       default null
                               , o_archvo_blob   out blob
                               , o_cdgo_rspsta   out number
                               , o_mnsje_rspsta  out varchar2);
+
+  procedure prc_co_archco_dsco_id (p_id_dcmnto      number
+                                 , o_archvo_blob    out blob
+                                 , o_cdgo_rspsta    out number
+                                 , o_mnsje_rspsta   out varchar2);
 
   procedure prc_el_archvo_dsco (p_directorio    varchar2
                               , p_nmbre_archvo  varchar2
@@ -65,8 +72,9 @@ create or replace package body pkg_gd_utilidades is
   /* prc_co_archco_dsco
 	   proceso que devuelve un blob si no ocurre ningun error
      de lo contrario devuelve codigo 10 y mensaje de error */
-  procedure prc_co_archco_dsco (p_directorio    varchar2
-                              , p_nmbre_archvo  varchar2
+  procedure prc_co_archco_dsco (p_directorio    varchar2    default null
+                              , p_nmbre_archvo  varchar2    default null
+                              , p_bfile         bfile       default null
                               , o_archvo_blob   out blob
                               , o_cdgo_rspsta   out number
                               , o_mnsje_rspsta  out varchar2) as
@@ -89,8 +97,8 @@ create or replace package body pkg_gd_utilidades is
         return;
     end if;
     
-    v_bfile := bfilename(p_directorio, p_nmbre_archvo);
-    
+    v_bfile := case when p_bfile is null then bfilename(p_directorio, p_nmbre_archvo) else p_bfile end;
+
     -- Tamaño del archivo
     v_blob_length := dbms_lob.getlength(v_bfile);
     if v_blob_length = 0 then
@@ -109,14 +117,56 @@ create or replace package body pkg_gd_utilidades is
     o_archvo_blob := v_blob;
     commit;
     dbms_lob.fileclose(v_bfile);
-  exception 
-    when others then
-        commit;
-        v_sqlerrm := sqlerrm;
-        o_cdgo_rspsta := 200;
-        o_mnsje_rspsta := '[prc_co_archco_dsco] Exception: ' || v_sqlerrm;
-        dbms_lob.fileclose(v_bfile);
+
+  exception when others then
+    commit;
+    v_sqlerrm := sqlerrm;
+    o_cdgo_rspsta := 200;
+    o_mnsje_rspsta := '[prc_co_archco_dsco] Exception: ' || v_sqlerrm;
+    dbms_lob.fileclose(v_bfile);
 	end;
+
+  procedure prc_co_archco_dsco_id (p_id_dcmnto      number
+                                 , o_archvo_blob    out blob
+                                 , o_cdgo_rspsta    out number
+                                 , o_mnsje_rspsta   out varchar2) as
+    v_bfile   bfile;
+    v_blob    blob;
+    v_sqlerrm varchar2(2000);
+  begin
+    select file_blob, file_bfile into v_blob, v_bfile
+    from gd_g_documentos
+    where id_dcmnto  = p_id_dcmnto;
+
+    if sql%notfound then
+        dbms_output.put_line('[pkg_gd_utilidades.prc_co_archco_dsco_id] No select');
+        o_cdgo_rspsta := 10;
+        o_mnsje_rspsta := '[pkg_gd_utilidades.prc_co_archco_dsco_id] No select gd_g_documentos.';
+        return;
+    end if;
+
+    if v_bfile is not null then
+      o_archvo_blob := v_blob;
+      o_mnsje_rspsta := 'Archivo en base de datos columna file_blob';
+    else 
+      pkg_gd_utilidades.prc_co_archco_dsco(p_bfile         => v_bfile
+                                         , o_archvo_blob   => v_blob
+                                         , o_cdgo_rspsta   => o_cdgo_rspsta
+                                         , o_mnsje_rspsta  => o_mnsje_rspsta);
+
+      if o_cdgo_rspsta <> 0 then 
+        o_archvo_blob := v_blob;
+      else
+        dbms_output.put_line('[pkg_gd_utilidades.prc_co_archco_dsco_id] No se puedo extraer el documento.');
+        o_cdgo_rspsta := 10;
+        o_mnsje_rspsta := '[pkg_gd_utilidades.prc_co_archco_dsco_id] No se puedo extraer el documento.';
+      end if;
+    end if;
+
+    exception when others then
+        o_cdgo_rspsta := 200;
+        o_mnsje_rspsta := '[pkg_gd_utilidades.prc_co_archco_dsco_id] Exception: ' || v_sqlerrm;
+  end prc_co_archco_dsco_id;
 
   procedure prc_el_archvo_dsco (p_directorio    varchar2
                               , p_nmbre_archvo  varchar2

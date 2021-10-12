@@ -2,11 +2,16 @@
 create table gd_g_crga_dcmto_tem(
   id_acto number,
   id_dcmto number,
+  user_dgta varchar (50),
+  fcha_dgta timestamp default systimestamp,
   nmro_acto number,
   nmbre_dcmto varchar(250),
   tmño_dcmto number,
   obsrvcion varchar(250)
 );
+/
+alter table gd_g_crga_dcmto_tem add user_dgta varchar (50);
+alter table gd_g_crga_dcmto_tem add fcha_dgta timestamp default systimestamp;
 /
 declare
 	-- ********************************************************************
@@ -96,6 +101,7 @@ begin
           dbms_output.put_line('[Error] Exception: ' || v_sqlerrm);
 end;
 /
+  
 declare
 	-- ********************************************************************
 	-- objeto:  cargar archivos desde disco duro como Documento de un Acto
@@ -113,7 +119,7 @@ begin
 	for c_acts_nmro in (select b.nmro_acto, b.id_Acto
                       from gi_g_determinaciones a
                       join gn_g_actos b on a.id_Acto = b.id_Acto
-                      where b.id_dcmnto is null and  a.id_dtrmncion_lte = 869) loop
+                      where b.id_dcmnto is null and  a.id_dtrmncion_lte = 870) loop
     begin
       -- Nombre de la arhivo
       v_nmbre_archvo := c_acts_nmro.nmro_acto || '.pdf';
@@ -147,7 +153,7 @@ begin
           where id_acto = c_acts_nmro.id_Acto;
           -- Guardamos en la tabla de registros temporales
           insert into gd_g_crga_dcmto_tem(id_acto, id_dcmto, nmro_acto, nmbre_dcmto, obsrvcion)
-            values(c_acts_nmro.id_Acto, v_id_dcmnto, c_acts_nmro.nmro_acto, v_file_name,'El archivo a sido registrado exitosamente, fecha: ' || to_char(sysdate, 'dd/mm/YYYY HH24:MI:SS'));
+            values(c_acts_nmro.id_Acto, v_id_dcmnto, c_acts_nmro.nmro_acto, v_file_name, 'El archivo a sido registrado exitosamente, fecha: ' || to_char(sysdate, 'dd/mm/YYYY HH24:MI:SS'));
           -- Guardamos
           commit;
         end if;
