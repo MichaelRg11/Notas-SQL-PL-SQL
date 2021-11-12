@@ -26,3 +26,42 @@ async function prueba(p_this) {
     console.log(e);
   };
 }
+
+const merge = async () => {
+  console.time('loop');
+  let popup = apex.widget.waitPopup();
+  let { cantidad, nmro_lote } = await peticionServerProcess('prc_nmro_documentos', {});
+  console.log('cantidad', cantidad)
+  if (cantidad > 0) {
+    let PDFDocument = PDFLib.PDFDocument;
+    const mergedPdf = await PDFDocument.create();
+    let i = 1;
+    let respData = [];
+    while (i <= cantidad) {
+      const { data } = await peticionServerProcess('prc_co_documentos', { x01: i, x02: (i + 19 > cantidad ? cantidad : i + 19) });
+      console.log(`# de datos => ${data.length}`)
+      let j = 0
+      while (j < data.length) {
+        let tem = await convertBase64ToFile(`data:application/pdf;base64,${data[j].fileBlob}`, data[j].fileName);
+        const document = await readFileAsync(tem);
+        const document2 = await PDFDocument.load(document);
+        let copiedPages = await mergedPdf.copyPages(document2, document2.getPageIndices());
+        copiedPages.forEach((page) => mergedPdf.addPage(page));
+        j++;
+      }
+      respData = respData.concat(data)
+      i = i + 20;
+    }
+    const mergedPdfFile = await mergedPdf.save();
+    //download(mergedPdfFile, `Detalle lote #${nmro_lote}.pdf`, 'application/pdf');
+    let zip = new JSZip();
+    zip.file(`Detalle lote #${nmro_lote}.pdf`, mergedPdfFile);
+    zip.generateAsync({ type: "blob" }).then(mergedPdfFile => {
+      download(mergedPdfFile, `Detalle lote #${nmro_lote}.zip`, 'application/zip');
+    });
+    console.timeEnd('loop'); // Muestra por consola: "loop: 63ms"
+  } else {
+    alert('No existen documentos asociados.')
+  }
+  popup.remove();
+}
