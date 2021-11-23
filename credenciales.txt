@@ -21,7 +21,7 @@ Usuario: tomcat
 Contraseña: Tom340202!
 
 Usuario Aplicativo
-http://192.168.11.34:8034/ords/f?p=4550:1:15580451814703:::::
+http://192.168.11.34:8034/ords/
 Nivis / 45757224 / 45757224
 Pedro Heredia / 122333 / 12345
 
