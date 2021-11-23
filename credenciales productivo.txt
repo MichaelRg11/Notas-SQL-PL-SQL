@@ -1,0 +1,10 @@
+***********************************************************************************
+INFORTRIBUTOS -SOLEDAD-
+SERVIDOR: clivdpgen01 192.168.12.21 ( BD ) - 192.168.12.22 ( Tomcat )
+***********************************************************************************
+Soledad Productivo
+Operativo
+Usuario: 1111111111
+Clave: AtlSol2021*
+
+https://taxation-soledad.gobiernoit.com/ords/f?p=50000:LOGIN_DESKTOP:5659933544345:::::
