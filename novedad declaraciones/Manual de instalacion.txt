@@ -1,0 +1,20 @@
+Funcionalidad:
+  1. Generacion de novedades a las declaraciones
+
+Manual de instalacion:
+  1. Se debe actualizar la vista de declaraciones, con el script "V_GI_G_DECLARACIONES.sql".
+  2. Se deben crear las tablas de declaraciones novedades, con el script "tablas_declaracion_novedades".
+  3. Se debe crear el paquete de declaraciones novedades:
+    3.1. Correre primeramente el script "pkg_gi_declaraciones_nvdad_header"
+    3.2. Despues de correr la cabezera sin errores ejecutamos el cuerpo "pkg_gi_declaraciones_nvdad_body"
+    3.3. Comprobar que el paquete completo compilo bien.
+  4. Crear la vista de declaraciones novedad, con el script "v_gi_g_dclrcnes_nvdad"
+  5. Importar las paginas 240, 239, 242 en ese orden
+    5.1. paginas 240, script "f70000_page_240"
+    5.2. paginas 239, script "f70000_page_239"
+    5.3. paginas 242, script "f70000_page_242"
+  6. Comprobar que las paginas se importaron con exito.
+  7. Probar la funcionalidad.
+
+Posdata:
+  La funcionalidad de generación de novedad a las declaraciones ya se encuentra en soledad prueba: "http://192.168.13.18:8195/ords"

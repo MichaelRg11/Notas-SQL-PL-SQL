@@ -7,6 +7,7 @@ declare
   v_id_dcmnto     number;
   v_file_name     varchar(100);
   v_sqlerrm       varchar2(2000);
+  v_dtrmncion_lte number := 104;
 begin
 	-- Recorremos los Actos a Cargarles Documentos
 	for c_acts_nmro in (select b.nmro_acto, b.id_Acto
@@ -14,16 +15,16 @@ begin
                       join gn_g_actos b on a.id_Acto = b.id_Acto
                       where b.id_dcmnto is null 
                         and b.indcdor_dcmnto_gnrdo = 'N'
-                        and a.id_dtrmncion_lte = 104;) loop
+                        and a.id_dtrmncion_lte = 104) loop
     begin
       -- Nombre de la arhivo
       v_nmbre_archvo := c_acts_nmro.nmro_acto || '.pdf';
       -- Determinamos si el Archivo existe en el Diretorio.
       begin
         if pkg_gd_utilidades.fnc_vl_archvo_exstnte(v_directorio, v_nmbre_archvo) = 'N' then
-          dbms_output.put_line('El archivo no existe en el directorio, fecha: ' || to_char(sysdate, 'dd/mm/YYYY HH24:MI:SS'));
+          dbms_output.put_line('El archivo no existe en el directorio.');
           insert into gd_g_crga_dcmto_tem(id_acto, nmro_acto, obsrvcion)
-            values(c_acts_nmro.id_Acto, c_acts_nmro.nmro_acto,  'El archivo no existe en el directorio, fecha: ' || to_char(sysdate, 'dd/mm/YYYY HH24:MI:SS'));
+            values(c_acts_nmro.id_Acto, c_acts_nmro.nmro_acto,  'El archivo no existe en el directorio.');
           commit;
           continue;                                       
         end if;
@@ -43,7 +44,7 @@ begin
 
         -- Guardamos en la tabla de registros temporales
         insert into gd_g_crga_dcmto_tem(id_acto, id_dcmto, nmro_acto, nmbre_dcmto, obsrvcion)
-        values(c_acts_nmro.id_Acto, v_id_dcmnto, c_acts_nmro.nmro_acto, v_file_name, 'El archivo a sido registrado exitosamente, fecha: ' || to_char(sysdate, 'dd/mm/YYYY HH24:MI:SS'));
+        values(c_acts_nmro.id_Acto, v_id_dcmnto, c_acts_nmro.nmro_acto, v_file_name, 'El archivo a sido registrado exitosamente.');
         -- Guardamos
         commit;
         
@@ -52,7 +53,7 @@ begin
           v_sqlerrm := sqlerrm;
           dbms_output.put_line('[Error acto:' || c_acts_nmro.id_Acto || '] Exception: ' || v_sqlerrm);
           insert into gd_g_crga_dcmto_tem(id_acto, nmro_acto, obsrvcion)
-            values(c_acts_nmro.id_Acto, c_acts_nmro.nmro_acto, '[Error acto:' || c_acts_nmro.id_Acto || '] Exception: ' || v_sqlerrm || ', fecha: ' || to_char(sysdate, 'dd/mm/YYYY HH24:MI:SS'));
+            values(c_acts_nmro.id_Acto, c_acts_nmro.nmro_acto, '[Error acto:' || c_acts_nmro.id_Acto || '] Exception: ' || v_sqlerrm || '.');
           commit;
       end;
     end;
