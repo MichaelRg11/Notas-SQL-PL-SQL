@@ -80,3 +80,37 @@ values (8758, '0102000013190002000000000', 2021, 2021);
 
 insert into cb_g_candidatos_juridico (cdgo_clnte, idntfccion_sjto, vgncia_dsde, vgncia_hsta)
 values (8758, '0102000013190004000000000', 2021, 2021);
+
+select * from gn_g_actos a
+where a.id_acto = 8758575;
+-- 471947
+select * from gd_g_documentos a
+where a.id_dcmnto = 471947;
+
+select * from gn_g_actos_vigencia a
+where a.id_acto = 8758575;
+
+select * from gn_g_actos_sujeto_impuesto a
+where a.id_acto = 8758575;
+
+select * from gn_g_actos_responsable a
+where a.id_acto = 8758575;
+
+update gn_g_actos set id_dcmnto = null
+where id_acto = 8758575;
+
+-- eliminar acto y documento asociado 
+delete gn_g_actos_vigencia a 
+where a.id_acto = 8758575;
+
+delete gn_g_actos_responsable a
+where a.id_acto = 8758575;
+
+delete gn_g_actos_sujeto_impuesto a
+where a.id_acto = 8758575;
+
+delete gn_g_actos a
+where a.id_acto = 8758575;
+-- 471947
+delete gd_g_documentos a
+where a.id_dcmnto = 471947;
