@@ -21,8 +21,7 @@ create or replace view V_FI_G_CANDIDATOS as
     s.id_sbprgrma,
     a.idntfccion,
     c.actvo
-  from
-         fi_g_candidatos c
+  from fi_g_candidatos c
     join si_i_sujetos_impuesto      b on c.id_sjto_impsto = b.id_sjto_impsto
     join si_c_sujetos               a on b.id_sjto = a.id_sjto
     join df_c_impuestos             i on c.id_impsto = i.id_impsto
