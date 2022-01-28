@@ -2,8 +2,8 @@
 alter table gn_g_candidatos_carga add idntfccion varchar2(100);
 alter table gn_g_candidatos_carga add vgncia_dsde varchar2(10);
 alter table gn_g_candidatos_carga add vgncia_hsta varchar2(10);
-alter table gn_g_candidatos_carga add id_impsto number,
-alter table gn_g_candidatos_carga add id_impsto_sbmpsto number,
+alter table gn_g_candidatos_carga add id_impsto number;
+alter table gn_g_candidatos_carga add id_impsto_sbmpsto number;
 alter table gn_g_candidatos_carga modify id_sjto_prcso number null;
 -- Para carga de fiscalizacion
 alter table gn_g_candidatos_carga add cdgo_prgrma varchar2(10);
