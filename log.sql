@@ -16,3 +16,12 @@ begin
     
   pkg_sg_log.prc_rg_configuraciones_log(p_cdgo_clnte => :p_cdgo_clnte, p_nmbre_up => 'pkg_gi_determinacion', p_nvel_log => 6);
 end;
+
+-- Paquetes descompilados
+select
+  case when object_type like 'PACKAGE BODY%' then
+    'alter package ' || object_name || ' compile body;'
+  else
+    'alter ' || object_type || ' ' || object_name || ' compile;'
+  end sentencia
+from user_objects where status like 'INV%';

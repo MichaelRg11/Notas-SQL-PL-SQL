@@ -8,6 +8,8 @@ alter table gn_g_candidatos_carga modify id_sjto_prcso number null;
 -- Para carga de fiscalizacion
 alter table gn_g_candidatos_carga add cdgo_prgrma varchar2(10);
 alter table gn_g_candidatos_carga add cdgo_subprgrma varchar2(10);
+alter table gn_g_candidatos_carga add periodo number;
+alter table gn_g_candidatos_carga add cdgo_prdcdad varchar2(5);
 
 -- Vista gn_g_candidatos_carga
 create or replace view V_GN_G_CANDIDATOS_CARGA as
@@ -25,6 +27,8 @@ create or replace view V_GN_G_CANDIDATOS_CARGA as
     a.id_impsto, 
     a.id_impsto_sbmpsto,
     a.cdgo_prgrma,
+    a.periodo,
+    a.cdgo_prdcdad,
     a.cdgo_subprgrma,
     b.cdgo_prcso,
     b.dscrpcion as dscrpcion_prcso,
